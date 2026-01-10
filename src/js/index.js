@@ -27,7 +27,6 @@ function loadTable() {
 }
 
 function renderAlphabetLevel(data) {
-    document.getElementById("dir-path").innerText = "Index of /data";
     const letters = [
         ...new Set(data.map((row) => row.TITEL.trim().charAt(0).toUpperCase())),
     ].sort();
