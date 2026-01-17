@@ -1,36 +1,44 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Index Inès</title>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-        <link rel="stylesheet" href="src/css/style.css" />
-    </head>
-    <body>
-        <h1 id="dir-path">Index Inès</h1>
 
-        <div id="table-container">
-            <p>Loading data...</p>
-        </div>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index Inès</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <link rel="stylesheet" href="src/css/style.css" />
+</head>
 
-        <div class="footer">Loaded 'data_indexed.csv'</div>
-        <h3>Notes voor Ines:</h3>
-        <p>
-            Dit is nu een extreem klassieke index, als een mini "proof of
-            concept". Er is dus nog niks experimenteel of creatiefs ofzo aan.
-        </p>
-        <p>
-            Voor meer info hoe het een beetje werkt:
-            <a href="./info.html">info.html</a>
-        </p>
-        <h4>todo</h4>
-        <ul>
-            <li>
-                Images werken nog niet, zou dit misschien met een hover doen
-            </li>
-        </ul>
+<body>
+    <!-- <h1 id="dir-path">Index Inès</h1> -->
 
-        <script src="src/js/index.js"></script>
-    </body>
+    <header id="header">
+
+        <h1><a href="index.html">Post Porn Print Index</a></h1>
+        <nav>
+            <a href="#">
+                <p>about</p>
+            </a>
+            <a href="#">
+                <p>index (list)</p>
+            </a>
+            <a href="#">
+                <p>index (cards)</p>
+            </a>
+            <a href="#">
+                <p>images</p>
+            </a>
+            <a href="#">
+                <p>search:__________</p>
+            </a>
+        </nav>
+    </header>
+    <!-- <p><a href="index.html">Parent Directory</a></p> -->
+    <div id="table-container">
+        <p>Loading data...</p>
+    </div>
+
+    <script src="src/js/table.js"></script>
+</body>
+
 </html>

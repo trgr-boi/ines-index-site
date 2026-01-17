@@ -28,7 +28,7 @@ NR == 1 {
 # Process data rows, skipping rows that are empty or just commas
 /[^,]/ { 
     count++;
-    printf "%07d,%s\n", count, $0;
+    printf "%04d,%s\n", count, $0;
 }
 ' "$INPUT" > "$OUTPUT"
 

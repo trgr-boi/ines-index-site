@@ -1,71 +1,81 @@
+@font-face {
+  font-family: 'sans';
+  src: url('/src/fonts/Amiamie-Regular.otf') format('opentype')
+}
+
+@font-face {
+  font-family: 'dot';
+  src: url('/src/fonts/Doto_Rounded-Black.ttf') format('truetype')
+}
+
 body {
-    /* font-family: sans-serif; */
-    background-color: #fff;
-    padding: 20px;
-    margin: 0;
-}
-
-h1 {
-    font-size: 1.5em;
-    margin-top: 0;
-}
-
-/* Container to prevent page-level overflow */
-#table-container {
-    width: 100%;
-    overflow-x: auto;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: monospace;
-    font-size: 13px;
-    /* Helps the table respect the 100% width */
-    table-layout: auto;
-}
-
-/* Horizontal lines only (X-axis) */
-th {
-    text-align: left;
-    padding: 10px 8px;
-    border-bottom: 2px solid #000;
-    background-color: #fff;
-}
-
-td {
-    padding: 8px;
-    border-bottom: 1px solid #000;
-    vertical-align: top;
-    /* Allow text to wrap and break if words are too long */
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
-}
-
-tr:hover {
-    background-color: #f5f5f5;
+  font-family: 'sans';
 }
 
 a {
-    color: #0000ee;
-    text-decoration: none;
+  text-decoration: none;
+  color: #000;
+  transition: color 0.2s ease;
 }
-
 a:hover {
-    text-decoration: underline;
+  color: red;
 }
 
-.folder-icon::before {
-    content: "📁 ";
-}
-.file-icon::before {
-    content: "📄 ";
+#header {
+  display: flex;
+  justify-content: space-between;
+  /* Pushes title to left, nav to right */
+  align-items: center;
+  /* Vertically centers the text */
+  padding: 10px 20px;
+  > h1 {
+    font-family: 'dot';
+    font-size: 7rem;
+    margin: 0;
+  }
+  nav {
+    p {
+      margin: 0;
+    }
+  }
 }
 
-.footer {
-    margin-top: 20px;
-    border-top: 1px solid #000;
-    padding-top: 5px;
-    font-size: 0.8em;
+/* Optional: Removes the default margin from <p> tags for better alignment */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#letter {
+  font-size: 60pt;
+}
+
+table th,
+table td {
+  border-right: 1px solid #000;
+  border-bottom: 1px solid #000;
+  padding: 8px;
+}
+
+table tbody tr:nth-child(1) td {
+  border-bottom: none;
+}
+
+table thead {
+  border-bottom: 1px solid #000;
+  > * {
+    text-align: left;
+  }
+}
+
+table th:last-child,
+table td:last-child {
+  border-right: none;
+}
+
+/* remove bottom */
+table tr:last-child th,
+table tr:last-child td {
+  border-bottom: none;
 }
