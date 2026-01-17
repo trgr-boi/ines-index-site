@@ -20,15 +20,20 @@ BEGIN {
     OFS=","; 
     count=0; 
 }
-# Process the first line (Header)
+# Process the first line (Header) - remove first (image) and last (bron) columns
 NR == 1 { 
-    print "#id", $0; 
+    printf "#id"
+    for(i=2; i<=NF-1; i++) printf ",%s", $i
+    printf "\n"
     next; 
 }
 # Process data rows, skipping rows that are empty or just commas
+# Remove first (image) and last (bron) columns
 /[^,]/ { 
     count++;
-    printf "%04d,%s\n", count, $0;
+    printf "%04d", count
+    for(i=2; i<=NF-1; i++) printf ",%s", $i
+    printf "\n"
 }
 ' "$INPUT" > "$OUTPUT"
 
