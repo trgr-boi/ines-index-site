@@ -1,0 +1,81 @@
+@font-face {
+  font-family: 'sans';
+  src: url('/src/fonts/Amiamie-Regular.otf') format('opentype')
+}
+
+@font-face {
+  font-family: 'dot';
+  src: url('/src/fonts/Doto_Rounded-Black.ttf') format('truetype')
+}
+
+body {
+  font-family: 'sans';
+}
+
+a {
+  text-decoration: none;
+  color: #000;
+  transition: color 0.2s ease;
+}
+a:hover {
+  color: red;
+}
+
+#header {
+  display: flex;
+  justify-content: space-between;
+  /* Pushes title to left, nav to right */
+  align-items: center;
+  /* Vertically centers the text */
+  padding: 10px 20px;
+  > h1 {
+    font-family: 'dot';
+    font-size: 7rem;
+    margin: 0;
+  }
+  nav {
+    p {
+      margin: 0;
+    }
+  }
+}
+
+/* Optional: Removes the default margin from <p> tags for better alignment */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#letter {
+  font-size: 60pt;
+}
+
+table th,
+table td {
+  border-right: 1px solid #000;
+  border-bottom: 1px solid #000;
+  padding: 8px;
+}
+
+table tbody tr:nth-child(1) td {
+  border-bottom: none;
+}
+
+table thead {
+  border-bottom: 1px solid #000;
+  > * {
+    text-align: left;
+  }
+}
+
+table th:last-child,
+table td:last-child {
+  border-right: none;
+}
+
+/* remove bottom */
+table tr:last-child th,
+table tr:last-child td {
+  border-bottom: none;
+}
