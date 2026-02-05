@@ -1,4 +1,4 @@
-const csvFile = "/src/csv/data_indexed.csv";
+const jsonFile = "src/data/data.json";
 const urlParams = new URLSearchParams(window.location.search);
 const selectedLetter = urlParams.get("letter");
 
@@ -6,48 +6,65 @@ function loadTable() {
 	console.log("Loading table...");
 	console.log("Selected Letter:", selectedLetter);
 
-	Papa.parse(csvFile, {
-		download: true,
-		header: true,
-		skipEmptyLines: true,
-		complete: function (results) {
-			const cleanData = results.data.filter(
-				(row) => row.TITEL && row.TITEL.trim() !== "",
+	fetch(jsonFile)
+		.then((response) => {
+			if (!response.ok) throw new Error("JSON not found");
+			return response.json();
+		})
+		.then((data) => {
+			const cleanData = data.filter(
+				(row) => row.TITLE && row.TITLE.trim() !== "",
 			);
-
-			if (selectedLetter) {
-				renderFileLevel(cleanData, selectedLetter.toUpperCase());
-			} else {
-				renderAlphabetLevel(cleanData);
+			if (cleanData.length === 0) {
+				document.getElementById("table-container").innerHTML =
+					"<p>No rows with TITEL found in JSON.</p>";
+				return;
 			}
-		},
-		error: function (err) {
+			renderAlphabetNav(cleanData);
+			renderFileLevel(cleanData, "ALL");
+			updateAlphabetNavOffset();
+		})
+		.catch((err) => {
 			document.getElementById("table-container").innerHTML =
-				`<p>Error loading CSV: ${err}</p>`;
-		},
-	});
+				`<p>Error loading JSON: ${err}</p>`;
+		});
 }
 
-function renderAlphabetLevel(data) {
+function updateAlphabetNavOffset() {
+	const nav = document.getElementById("alphabet-nav");
+	if (!nav) return;
+	const height = nav.offsetHeight;
+	document.documentElement.style.setProperty(
+		"--alphabet-nav-height",
+		`${height}px`,
+	);
+}
+
+function renderAlphabetNav(data) {
+	const nav = document.getElementById("alphabet-nav");
+	if (!nav) return;
+
 	const letters = [
-		...new Set(data.map((row) => row.TITEL.trim().charAt(0).toUpperCase())),
+		...new Set(data.map((row) => row.TITLE.trim().charAt(0).toUpperCase())),
 	].sort();
 
-	let html =
-		"<table><thead><tr><th>Name</th><th>Items Count</th></tr></thead><tbody>";
+	nav.innerHTML = letters
+		.map(
+			(letter) =>
+				`<a href="#letter-${letter}" data-letter="${letter}">${letter}</a>`,
+		)
+		.join(" ");
 
-	// All row
-	html += `<tr><td class="folder-icon"><a href="?letter=all">All</a></td><td>${data.length} items</td></tr>`;
-
-	letters.forEach((letter) => {
-		const count = data.filter((row) =>
-			row.TITEL.trim().toUpperCase().startsWith(letter),
-		).length;
-		html += `<tr><td class="folder-icon"><a href="?letter=${letter}">${letter}</a></td><td>${count} items</td></tr>`;
+	nav.querySelectorAll("a[data-letter]").forEach((link) => {
+		link.addEventListener("click", (event) => {
+			event.preventDefault();
+			const letter = link.getAttribute("data-letter");
+			const target = document.getElementById(`letter-${letter}`);
+			if (target) {
+				target.scrollIntoView({ behavior: "smooth", block: "start" });
+			}
+		});
 	});
-
-	html += "</tbody></table>";
-	document.getElementById("table-container").innerHTML = html;
 }
 
 function renderFileLevel(data, letter) {
@@ -55,28 +72,44 @@ function renderFileLevel(data, letter) {
 	const dirTitle = isAllView ? "All" : letter;
 
 	const filteredData = isAllView
-		? data.sort((a, b) => a.TITEL.localeCompare(b.TITEL))
-		: data.filter((row) => row.TITEL.trim().toUpperCase().startsWith(letter))
-				.sort((a, b) => a.TITEL.localeCompare(b.TITEL));
+		? data.sort((a, b) => a.TITLE.localeCompare(b.TITLE))
+		: data.filter((row) => row.TITLE.trim().toUpperCase().startsWith(letter))
+				.sort((a, b) => a.TITLE.localeCompare(b.TITLE));
+	if (filteredData.length === 0) {
+		document.getElementById("table-container").innerHTML =
+			"<p>No data available for this view.</p>";
+		return;
+	}
+
 	const headers = Object.keys(filteredData[0]).filter(
-		(h) =>
-			h !== "#id" && h !== "�image" && h !== "__parsed_extra" && h !== "bron?",
+		(h) => h !== "ID" && h !== "IMAGE" && h !== "DESCRIPTION",
 	);
 
 	let html = "<table><thead><tr>";
+	html += "<th>#</th>";
 	headers.forEach((h) => (html += `<th>${h}</th>`));
 	html += "</tr></thead><tbody>";
 
-	// Letter row
-	html += "<tr>";
-	html += `<td id="letter"><strong>${dirTitle}</strong></td>`;
-	for (let i = 1; i < headers.length; i++) {
-		html += "<td></td>";
-	}
-	html += "</tr>";
+	let currentSection = null;
 
 	filteredData.forEach((row) => {
+		const firstLetter = row.TITLE.trim().charAt(0).toUpperCase();
+		
+		// Add section header when letter changes
+		if (firstLetter !== currentSection) {
+			currentSection = firstLetter;
+			html += `<tr class="letter-row" id="letter-${firstLetter}">`;
+			html += "<td></td>";
+			html += `<td class="letter"><strong>${firstLetter}</strong></td>`;
+			for (let i = 1; i < headers.length; i++) {
+				html += "<td></td>";
+			}
+			html += "</tr>";
+		}
+
+		const rowNumber = filteredData.indexOf(row) + 1;
 		html += "<tr>";
+		html += `<td>${rowNumber}</td>`;
 		headers.forEach((h, index) => {
 			let content = row[h] ? row[h].toString().trim() : "";
 			if (content === "") content = "-";
@@ -92,3 +125,4 @@ function renderFileLevel(data, letter) {
 }
 
 window.onload = loadTable;
+window.addEventListener("resize", updateAlphabetNavOffset);
