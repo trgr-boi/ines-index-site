@@ -130,7 +130,7 @@ function openImageModal(imagePath, rowData) {
 	// Scroll indicator
 	const indicator = document.createElement("div");
 	indicator.className = "scroll-indicator";
-	indicator.textContent = "↓";
+	indicator.textContent = "▼";
 	indicator.addEventListener("click", () => {
 		const dataSec = imageModal.querySelector(".modal-data-section");
 		if (dataSec) dataSec.scrollIntoView({ behavior: "smooth" });

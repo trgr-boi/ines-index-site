@@ -81,17 +81,23 @@ function renderAlphabetNav(data) {
 		...new Set(data.map((row) => row.TITLE.trim().charAt(0).toUpperCase())),
 	].sort();
 
-	nav.innerHTML = letters
-		.map(
-			(letter) =>
-				`<a href="#letter-${letter}" data-letter="${letter}">${letter}</a>`,
-		)
-		.join(" ");
+	nav.innerHTML =
+		'<a href="#" data-letter="top">▴</a> ' +
+		letters
+			.map(
+				(letter) =>
+					`<a href="#letter-${letter}" data-letter="${letter}">${letter}</a>`,
+			)
+			.join(" ");
 
 	nav.querySelectorAll("a[data-letter]").forEach((link) => {
 		link.addEventListener("click", (event) => {
 			event.preventDefault();
 			const letter = link.getAttribute("data-letter");
+			if (letter === "top") {
+				window.scrollTo({ top: 0, behavior: "smooth" });
+				return;
+			}
 			const target = document.getElementById(`letter-${letter}`);
 			if (target) {
 				target.scrollIntoView({ behavior: "smooth", block: "start" });
