@@ -122,6 +122,10 @@ table td {
   transition: background-color 0.1s ease;
 }
 
+table tbody tr:not(.letter-row) td {
+  vertical-align: top;
+}
+
 /* Google Sheets-style hover highlighting - toggle HOVER_HIGHLIGHT in table.js to disable */
 table:not(.highlight-disabled) tbody td:hover {
   background-color: #f0f0f0;
@@ -211,15 +215,10 @@ table tr:last-child td {
 
 .image-modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   z-index: 200;
+  overflow-y: auto;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -230,40 +229,6 @@ table tr:last-child td {
 
 .image-modal.visible {
   opacity: 1;
-}
-
-.modal-content {
-  position: relative;
-  width: 80vmin;
-  height: 80vmin;
-  max-width: 90vw;
-  max-height: 90vh;
-  background: #fff;
-  display: flex;
-}
-
-.modal-close {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: #fff;
-  border: none;
-  border-bottom: 1px solid #000;
-  border-left: 1px solid #000;
-  color: #000;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
-
-.modal-close:hover {
-  color: red;
 }
 
 /* ===== Images grid page ===== */
@@ -283,8 +248,8 @@ table tr:last-child td {
 }
 
 .image-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+  box-shadow: 0 4px 0px rgba(0, 0, 0, 1);
 }
 
 .image-card-img {
@@ -312,37 +277,41 @@ table tr:last-child td {
 
 /* ===== Modal with data panel ===== */
 
-.modal-inner {
-  display: flex;
-  width: 100%;
-  height: 100%;
-}
-
-.modal-image-panel {
-  flex: 1 1 50%;
+.modal-image-section {
+  position: sticky;
+  top: 0;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  border-right: 1px solid #000;
+  pointer-events: none;
+  z-index: 1;
 }
 
-.modal-image-panel .modal-image {
-  width: 100%;
-  height: 100%;
+.modal-image-section .modal-image {
+  max-width: 90vw;
+  max-height: 85vh;
   object-fit: contain;
   display: block;
 }
 
-.modal-data-panel {
-  flex: 1 1 50%;
-  overflow-y: auto;
-  color: #000;
-  padding: 32px 20px 16px 20px;
+.modal-data-section {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
   box-sizing: border-box;
 }
 
 .modal-data {
+  background: #fff;
+  padding: 32px 24px;
+  max-width: 500px;
+  width: 100%;
+  border: 1px solid #000;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -367,14 +336,29 @@ table tr:last-child td {
   color: #000;
 }
 
+.scroll-indicator {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  color: #fff;
+  font-size: 1.2rem;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+  pointer-events: auto;
+  cursor: pointer;
+  animation: bounce 2s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(6px); }
+}
+
 /* ===== Mobile ===== */
 
 @media (max-width: 850px) {
-  .modal-content {
-    width: 90vw;
-    height: 90vw;
-  }
-
   .images-grid {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 10px;

@@ -7,23 +7,28 @@ const imageModal = document.createElement("div");
 imageModal.id = "image-modal";
 imageModal.className = "image-modal hidden";
 
-const modalContent = document.createElement("div");
-modalContent.className = "modal-content";
-
-const closeBtn = document.createElement("button");
-closeBtn.className = "modal-close";
-closeBtn.textContent = "✕";
-
-imageModal.appendChild(modalContent);
-imageModal.appendChild(closeBtn);
 document.body.appendChild(imageModal);
 
-closeBtn.addEventListener("click", closeModal);
+// Close on clicking outside image/data
 imageModal.addEventListener("click", (e) => {
-	if (e.target === imageModal) closeModal();
+	if (!e.target.closest(".modal-image") && !e.target.closest(".modal-data") && !e.target.closest(".scroll-indicator")) {
+		closeModal();
+	}
 });
 document.addEventListener("keydown", (e) => {
 	if (e.key === "Escape") closeModal();
+});
+
+// Shrink/fade image + hide scroll indicator on scroll
+imageModal.addEventListener("scroll", () => {
+	const img = imageModal.querySelector(".modal-image");
+	if (!img) return;
+	const progress = Math.min(imageModal.scrollTop / window.innerHeight, 1);
+	img.style.transform = `scale(${1 - progress * 0.15})`;
+	img.style.opacity = 1 - progress * 0.7;
+
+	const indicator = imageModal.querySelector(".scroll-indicator");
+	if (indicator) indicator.style.opacity = Math.max(0, 1 - imageModal.scrollTop / 80);
 });
 
 function buildModalDataHTML(rowData) {
@@ -53,48 +58,59 @@ function buildModalDataHTML(rowData) {
 function openImageModal(imagePath, rowData) {
 	if (!imagePath || imagePath === "-") return;
 
-	modalContent.innerHTML = "";
-	const wrapper = document.createElement("div");
-	wrapper.className = "modal-inner";
+	imageModal.innerHTML = "";
 
-	// Image panel (left)
-	const imagePanel = document.createElement("div");
-	imagePanel.className = "modal-image-panel";
+	// Image section (sticky, stays at top)
+	const imageSection = document.createElement("div");
+	imageSection.className = "modal-image-section";
 
 	const img = new Image();
-
-	// Data panel (right)
-	const dataPanel = document.createElement("div");
-	dataPanel.className = "modal-data-panel";
-	dataPanel.innerHTML = buildModalDataHTML(rowData);
-
 	img.onload = () => {
-		imagePanel.appendChild(img);
+		imageSection.appendChild(img);
 	};
 	img.onerror = () => {
 		const noImageDiv = document.createElement("div");
 		noImageDiv.className = "no-image modal-no-image";
 		noImageDiv.textContent = "no image";
-		imagePanel.appendChild(noImageDiv);
+		imageSection.appendChild(noImageDiv);
 	};
 	img.src = imagePath;
 	img.className = "modal-image";
 
-	wrapper.appendChild(imagePanel);
-	wrapper.appendChild(dataPanel);
-	modalContent.appendChild(wrapper);
-	modalContent.appendChild(closeBtn);
+	// Data section (scrolls up over the image)
+	const dataSection = document.createElement("div");
+	dataSection.className = "modal-data-section";
+	dataSection.innerHTML = buildModalDataHTML(rowData);
+
+	// Scroll indicator
+	const indicator = document.createElement("div");
+	indicator.className = "scroll-indicator";
+	indicator.textContent = "↓";
+	indicator.addEventListener("click", () => {
+		const dataSec = imageModal.querySelector(".modal-data-section");
+		if (dataSec) dataSec.scrollIntoView({ behavior: "smooth" });
+	});
+
+	imageModal.appendChild(imageSection);
+	imageModal.appendChild(dataSection);
+	imageModal.appendChild(indicator);
+
+	// Reset scroll so image is visible first
+	imageModal.scrollTop = 0;
 
 	imageModal.classList.remove("hidden");
 	imageModal.offsetHeight;
 	imageModal.classList.add("visible");
+	document.body.style.overflow = "hidden";
 }
 
 function closeModal() {
+	imageModal.scrollTop = 0;
+	document.body.style.overflow = "";
 	imageModal.classList.remove("visible");
 	setTimeout(() => {
 		imageModal.classList.add("hidden");
-		modalContent.innerHTML = "";
+		imageModal.innerHTML = "";
 	}, 300);
 }
 
