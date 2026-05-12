@@ -22,6 +22,27 @@ a:hover {
   color: red;
 }
 
+.search-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+#search-input {
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  border-bottom: 1px solid #000;
+  outline: none;
+  background: transparent;
+  width: 120px;
+  padding: 0 2px;
+}
+
+#search-input:focus {
+  border-bottom-color: red;
+}
+
 #header {
   display: flex;
   justify-content: space-between;

@@ -5,6 +5,9 @@ const selectedLetter = urlParams.get("letter");
 // Toggle hover highlighting: change to false to disable
 const HOVER_HIGHLIGHT = false;
 
+// Cached data for search filtering
+let allData = [];
+
 function loadTable() {
 	console.log("Loading table...");
 	console.log("Selected Letter:", selectedLetter);
@@ -15,22 +18,49 @@ function loadTable() {
 			return response.json();
 		})
 		.then((data) => {
-			const cleanData = data.filter(
+			allData = data.filter(
 				(row) => row.TITLE && row.TITLE.trim() !== "",
 			);
-			if (cleanData.length === 0) {
+			if (allData.length === 0) {
 				document.getElementById("table-container").innerHTML =
 					"<p>No rows with TITEL found in JSON.</p>";
 				return;
 			}
-			renderAlphabetNav(cleanData);
-			renderFileLevel(cleanData, "ALL");
+			renderFromSearch();
 			updateAlphabetNavOffset();
 		})
 		.catch((err) => {
 			document.getElementById("table-container").innerHTML =
 				`<p>Error loading JSON: ${err}</p>`;
 		});
+}
+
+function filterBySearch(data, query) {
+	if (!query) return data;
+	const q = query.toLowerCase();
+	return data.filter((row) =>
+		Object.values(row).some(
+			(val) => val && val.toString().toLowerCase().includes(q),
+		),
+	);
+}
+
+function renderFromSearch() {
+	const query = (document.getElementById("search-input").value || "").trim();
+	const filtered = filterBySearch(allData, query);
+	renderAlphabetNav(filtered);
+	renderFileLevel(filtered, "ALL");
+}
+
+function initSearch() {
+	const input = document.getElementById("search-input");
+	if (!input) return;
+	input.addEventListener("input", () => {
+		renderFromSearch();
+		updateAlphabetNavOffset();
+		// Re-init image previews for the new table rows
+		if (typeof initImagePreview === "function") initImagePreview();
+	});
 }
 
 function updateAlphabetNavOffset() {
@@ -132,5 +162,8 @@ function renderFileLevel(data, letter) {
 	document.getElementById("table-container").innerHTML = html;
 }
 
-window.onload = loadTable;
+window.onload = () => {
+	loadTable();
+	initSearch();
+};
 window.addEventListener("resize", updateAlphabetNavOffset);
