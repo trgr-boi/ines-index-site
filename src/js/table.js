@@ -146,7 +146,8 @@ function renderFileLevel(data, letter) {
 
 		const rowNumber = filteredData.indexOf(row) + 1;
 		const imagePath = row.IMAGE ? row.IMAGE.toString().trim() : "";
-		html += `<tr data-image-path="${imagePath}">`;
+		const rowJson = JSON.stringify(row).replace(/&/g, '&amp;').replace(/'/g, '&#39;');
+		html += `<tr data-image-path="${imagePath}" data-row='${rowJson}'>`;
 		html += `<td>${rowNumber}</td>`;
 		headers.forEach((h, index) => {
 			let content = row[h] ? row[h].toString().trim() : "";
